@@ -1,0 +1,99 @@
+;; gorilla-repl.fileformat = 1
+
+;; **
+;;; # Gorilla REPL
+;;; 
+;;; Welcome to gorilla :-)
+;;; 
+;;; Shift + enter evaluates code. Hit alt+g twice in quick succession or click the menu icon (upper-right corner) for more commands ...
+;;; 
+;;; It's a good habit to run each worksheet in its own namespace: feel free to use the declaration we've provided below if you'd like.
+;; **
+
+;; @@
+(ns flowing-geyser
+  (:require [gorilla-plot.core :as plot]))
+;; @@
+
+;; @@
+(reduce * (repeat 10 2))
+;; @@
+;; =>
+;;; {"type":"html","content":"<span class='clj-long'>1024</span>","value":"1024"}
+;; <=
+
+;; @@
+(reduce str (repeat 4 "a"))
+;; @@
+;; =>
+;;; {"type":"html","content":"<span class='clj-string'>&quot;aaaa&quot;</span>","value":"\"aaaa\""}
+;; <=
+
+;; @@
+(repeatedly 20 #(rand-int 100))
+;; @@
+;; =>
+;;; {"type":"list-like","open":"<span class='clj-lazy-seq'>(</span>","close":"<span class='clj-lazy-seq'>)</span>","separator":" ","items":[{"type":"html","content":"<span class='clj-unkown'>56</span>","value":"56"},{"type":"html","content":"<span class='clj-unkown'>65</span>","value":"65"},{"type":"html","content":"<span class='clj-unkown'>69</span>","value":"69"},{"type":"html","content":"<span class='clj-unkown'>25</span>","value":"25"},{"type":"html","content":"<span class='clj-unkown'>72</span>","value":"72"},{"type":"html","content":"<span class='clj-unkown'>79</span>","value":"79"},{"type":"html","content":"<span class='clj-unkown'>0</span>","value":"0"},{"type":"html","content":"<span class='clj-unkown'>28</span>","value":"28"},{"type":"html","content":"<span class='clj-unkown'>9</span>","value":"9"},{"type":"html","content":"<span class='clj-unkown'>72</span>","value":"72"},{"type":"html","content":"<span class='clj-unkown'>48</span>","value":"48"},{"type":"html","content":"<span class='clj-unkown'>86</span>","value":"86"},{"type":"html","content":"<span class='clj-unkown'>47</span>","value":"47"},{"type":"html","content":"<span class='clj-unkown'>27</span>","value":"27"},{"type":"html","content":"<span class='clj-unkown'>98</span>","value":"98"},{"type":"html","content":"<span class='clj-unkown'>3</span>","value":"3"},{"type":"html","content":"<span class='clj-unkown'>94</span>","value":"94"},{"type":"html","content":"<span class='clj-unkown'>40</span>","value":"40"},{"type":"html","content":"<span class='clj-unkown'>34</span>","value":"34"},{"type":"html","content":"<span class='clj-unkown'>46</span>","value":"46"}],"value":"(56 65 69 25 72 79 0 28 9 72 48 86 47 27 98 3 94 40 34 46)"}
+;; <=
+
+;; @@
+Math/PI
+;; @@
+;; =>
+;;; {"type":"html","content":"<span class='clj-double'>3.141592653589793</span>","value":"3.141592653589793"}
+;; <=
+
+;; @@
+(defn calculate-pi
+  "Calculates Pi using the approximation 4 * (1 - 1/3 + 1/5 - 1/7 + ...)"
+  [iterations]
+  (let [odd-numbers (filter odd? (iterate inc 1))]
+    (* 4.0
+(apply + (map / (cycle [1 -1]) (take iterations odd-numbers))))))
+;; @@
+;; =>
+;;; {"type":"html","content":"<span class='clj-var'>#&#x27;user/calculate-pi</span>","value":"#'user/calculate-pi"}
+;; <=
+
+;; @@
+(calculate-pi 1000000)
+;; @@
+
+;; @@
+(defn sum-last-2 
+   ([] (sum-last-2 1 2)) 
+   ([n m] (cons n (lazy-seq (sum-last-2 m (+ n m))))))
+;; @@
+
+;; @@
+
+;; @@
+
+;; @@
+
+;; @@
+
+;; @@
+(defn sieve [s]
+  (cons (first s)
+        (lazy-seq (sieve (filter #(not= 0 (mod % (first s)))
+                                 (rest s))))))
+;; @@
+
+;; @@
+(take 20 (sieve (iterate inc 2)))
+;; @@
+
+;; @@
+(def prime-numbers
+  ((fn f [x]
+     (cons x
+       (lazy-seq
+         (f (first
+              (drop-while
+                (fn [n]
+                  (some #(zero? (mod n %))
+                    (take-while #(<= (* % %) n) prime-numbers)))
+                (iterate inc (inc x))))))))
+2))
+;; @@
